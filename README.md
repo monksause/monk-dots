@@ -20,7 +20,7 @@ a minimal, clean hyprland setup for wayland.
 ## install
 
 ```bash
-git clone https://github.com/<your-username>/monk-dots.git ~/.dotfiles
+git clone https://github.com/monksause/monk-dots.git ~/.dotfiles
 cd ~/.dotfiles
 chmod +x install.sh
 ./install.sh
