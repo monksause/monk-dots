@@ -1,17 +1,30 @@
 #!/usr/bin/env bash
 # =============================================================================
 #  install.sh — dotfiles bootstrap
-#  Detects distro, installs all required packages, then symlinks ~/.dotfiles/*
-#  into ~/.config/
+#  Detects distro, installs all required packages, then uses GNU Stow to
+
+#  Expected stow package layout (each config dir mirrors $HOME):
+#    ~/.dotfiles/alacritty/.config/alacritty/  →  ~/.config/alacritty/
+#    ~/.dotfiles/fish/.config/fish/            →  ~/.config/fish/
+#    ... and so on.
+#
+#  Usage:
+#    ./install.sh            — install packages + stow all configs
+#    ./install.sh --unstow   — remove all stow-managed symlinks
+#    ./install.sh --restow   — restow (useful after pulling upstream changes)
 # =============================================================================
 
 set -euo pipefail
 
 DOTFILES_DIR="${HOME}/.dotfiles"
-CONFIG_DIR="${HOME}/.config"
 
-# Configs to symlink (must match directory names inside ~/.dotfiles)
+# Stow packages (must match directory names inside ~/.dotfiles)
 CONFIGS=(alacritty fish hypr kitty rofi swaync swayosd)
+
+# Parse flag
+ACTION="stow"
+[[ "${1:-}" == "--unstow"  ]] && ACTION="unstow"
+[[ "${1:-}" == "--restow"  ]] && ACTION="restow"
 
 # ── Colours ──────────────────────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
@@ -45,15 +58,16 @@ install_packages() {
         # ── Arch ─────────────────────────────────────────────────────────────
         arch)
             PKGS_MAIN=(
+                stow
                 alacritty fish kitty
                 hyprland xdg-desktop-portal-hyprland
-                swww hyprlock hypridle
+                awww hyprlock hypridle
                 rofi-wayland
                 flameshot pavucontrol blueman nm-connection-editor
                 pipewire pipewire-pulse wireplumber
             )
             # AUR packages (swaync, swayosd)
-            PKGS_AUR=(swaync swayosd)
+            PKGS_AUR=(swaync swayosd nmgui-bin)
 
             info "Installing main repo packages via pacman…"
             sudo pacman -Syu --needed --noconfirm "${PKGS_MAIN[@]}"
@@ -87,9 +101,10 @@ install_packages() {
                 || warn "hyprland COPR may already be enabled or unavailable."
 
             PKGS_MAIN=(
+                stow
                 alacritty fish kitty
                 hyprland xdg-desktop-portal-hyprland
-                swww hyprlock hypridle
+                awww hyprlock hypridle
                 rofi-wayland
                 SwayNotificationCenter swayosd
                 flameshot pavucontrol blueman nm-connection-editor
@@ -121,13 +136,14 @@ install_packages() {
             # swaync — available in Ubuntu 24.04+ and Debian sid; fall back gracefully
             # swayosd  — usually needs manual install on Debian; we try apt and warn
             PKGS_MAIN=(
+                stow
                 alacritty fish kitty
                 hyprland xdg-desktop-portal-hyprland
                 rofi
                 sway-notification-center   # package name for swaync on apt
                 flameshot pavucontrol blueman network-manager-gnome
                 pipewire pipewire-audio wireplumber
-                swww
+                awww
             )
 
             info "Installing packages via apt…"
@@ -146,38 +162,53 @@ install_packages() {
             ;;
     esac
 
+    # nmgui — binary install for non-Arch distros
+    if [[ "${DISTRO}" != "arch" ]]; then
+        install_nmgui
+    fi
+
     success "Package installation complete."
 }
 
-# ── Symlink dotfiles ──────────────────────────────────────────────────────────
-symlink_configs() {
-    info "Symlinking configs from ${DOTFILES_DIR} → ${CONFIG_DIR}"
+# ── nmgui (Fedora + Debian only) ──────────────────────────────────────────────
+install_nmgui() {
+    info "Installing nmgui…"
+    sudo curl -L https://github.com/s-adi-dev/nmgui/releases/download/v1.0.0/main.bin \
+        -o /usr/bin/nmgui
+    sudo chmod +x /usr/bin/nmgui
+    curl -sL https://raw.githubusercontent.com/s-adi-dev/nmgui/main/nmgui.desktop \
+        | sudo tee /usr/share/applications/nmgui.desktop > /dev/null
+    success "nmgui installed."
+}
 
+# ── Stow dotfiles ─────────────────────────────────────────────────────────────
+stow_configs() {
     [[ -d "${DOTFILES_DIR}" ]] \
-        || die "~/.dotfiles directory not found! Clone your dotfiles there first."
+        || die "~/.dotfiles not found! Clone your dotfiles there first."
 
-    mkdir -p "${CONFIG_DIR}"
+    case "${ACTION}" in
+        stow)
+            info "Stowing configs into ${HOME}…"
+            STOW_FLAGS=("--verbose=1" "--target=${HOME}" "--dir=${DOTFILES_DIR}")
+            ;;
+        unstow)
+            info "Unstowing configs from ${HOME}…"
+            STOW_FLAGS=("--verbose=1" "--target=${HOME}" "--dir=${DOTFILES_DIR}" "--delete")
+            ;;
+        restow)
+            info "Restowing configs (delete + re-link)…"
+            STOW_FLAGS=("--verbose=1" "--target=${HOME}" "--dir=${DOTFILES_DIR}" "--restow")
+            ;;
+    esac
 
-    for cfg in "${CONFIGS[@]}"; do
-        src="${DOTFILES_DIR}/${cfg}"
-        dst="${CONFIG_DIR}/${cfg}"
-
-        if [[ ! -d "${src}" ]]; then
-            warn "Source directory missing, skipping: ${src}"
+    for pkg in "${CONFIGS[@]}"; do
+        if [[ ! -d "${DOTFILES_DIR}/${pkg}" ]]; then
+            warn "Package directory missing, skipping: ${DOTFILES_DIR}/${pkg}"
             continue
         fi
-
-        if [[ -L "${dst}" ]]; then
-            warn "Symlink already exists, skipping: ${dst}"
-        elif [[ -d "${dst}" ]]; then
-            warn "Real directory exists at ${dst}. Backing up → ${dst}.bak"
-            mv "${dst}" "${dst}.bak"
-            ln -s "${src}" "${dst}"
-            success "Linked (after backup): ${dst} → ${src}"
-        else
-            ln -s "${src}" "${dst}"
-            success "Linked: ${dst} → ${src}"
-        fi
+        stow "${STOW_FLAGS[@]}" "${pkg}" \
+            && success "${ACTION}: ${pkg}" \
+            || warn "stow conflict on '${pkg}' — check for existing files and remove or back them up."
     done
 }
 
@@ -188,8 +219,14 @@ main() {
     echo -e   "╚══════════════════════════════════╝${RESET}\n"
 
     detect_distro
-    install_packages
-    symlink_configs
+
+    if [[ "${ACTION}" == "stow" ]]; then
+        install_packages
+    else
+        info "Skipping package install (action: ${ACTION})"
+    fi
+
+    stow_configs
 
     echo ""
     success "All done! Log out and back in (or reboot) to start Hyprland."
