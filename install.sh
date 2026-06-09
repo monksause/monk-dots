@@ -61,8 +61,8 @@ install_packages() {
                 stow
                 alacritty fish kitty
                 hyprland xdg-desktop-portal-hyprland
-                awww hyprlock hypridle
-                rofi-wayland waybar
+                awww hyprlock hypridle waybar
+                rofi-wayland
                 flameshot pavucontrol blueman nm-connection-editor
                 pipewire pipewire-pulse wireplumber
             )
