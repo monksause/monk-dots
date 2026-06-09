@@ -61,7 +61,7 @@ install_packages() {
                 stow
                 alacritty fish kitty
                 hyprland xdg-desktop-portal-hyprland
-                awww hyprlock hypridle
+                awww hyprlock hypridle waybar
                 rofi-wayland
                 flameshot pavucontrol blueman nm-connection-editor
                 pipewire pipewire-pulse wireplumber
@@ -105,7 +105,7 @@ install_packages() {
                 alacritty fish kitty
                 hyprland xdg-desktop-portal-hyprland
                 awww hyprlock hypridle
-                rofi-wayland
+                rofi-wayland waybar
                 SwayNotificationCenter swayosd
                 flameshot pavucontrol blueman nm-connection-editor
                 pipewire pipewire-pulseaudio wireplumber
@@ -139,7 +139,7 @@ install_packages() {
                 stow
                 alacritty fish kitty
                 hyprland xdg-desktop-portal-hyprland
-                rofi
+                rofi waybar
                 sway-notification-center   # package name for swaync on apt
                 flameshot pavucontrol blueman network-manager-gnome
                 pipewire pipewire-audio wireplumber
