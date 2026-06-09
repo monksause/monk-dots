@@ -122,8 +122,8 @@ hl.bind(
 	hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),
 	{ locked = true, repeating = true }
 )
-hl.bind("XF86BrightnessRaise", hl.dsp.exec_cmd("swayosd-client --brightness raise"))
-hl.bind("XF86BrightnessLower", hl.dsp.exec_cmd("swayosd-client --brightness lower"))
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("swayosd-client --brightness raise"))
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("swayosd-client --brightness lower"))
 
 -- Brightness change binds for non brightness hotkey keyboards --
 -- hl.bind("ALT + Prior", hl.dsp.exec_cmd("swayosd-client --brightness raise"), { locked = true, repeating = true })
