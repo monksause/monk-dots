@@ -1,0 +1,73 @@
+/* term-run.rasi — floating terminal bar
+   Matches your config.rasi palette exactly.
+   Drop this in ~/.config/rofi/term-run.rasi
+*/
+
+configuration {
+    modi:            "run";
+    show-icons:      false;
+    disable-history: false;
+    font:            "CaskaydiaCove Nerd Font Mono 11";
+}
+
+* {
+    background:       transparent;
+    foreground:       #ffffffee;
+    selected:         #ffffff15;
+    urgent:           #ff5555aa;
+    background-color: transparent;
+    text-color:       @foreground;
+}
+
+window {
+    transparency:     "real";
+    location:         center;
+    anchor:           center;
+    width:            480px;
+    border:           0;
+    border-radius:    12px;
+    background-color: #00000099;
+    padding:          0;
+}
+
+mainbox {
+    padding:          10px 12px;
+    spacing:          0;
+    background-color: transparent;
+    children:         [ "inputbar" ];
+}
+
+inputbar {
+    padding:          10px 14px;
+    margin:           0;
+    border:           0;
+    border-radius:    8px;
+    background-color: #ffffff0c;
+    spacing:          10px;
+    children:         [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled:          true;
+    padding:          0 6px 0 0;
+    background-color: transparent;
+    /* terminal icon via Nerd Font */
+    text-color:       #ffffffaa;
+}
+
+entry {
+    placeholder:       "run a command…";
+    placeholder-color: #ffffff40;
+    background-color:  transparent;
+    text-color:        #ffffffd0;
+    horizontal-align:  0.0;
+    cursor:            text;
+    font:              "CaskaydiaCove Nerd Font Mono 10";
+    expand:            true;
+}
+
+/* Hide the results list entirely — input-only bar */
+listview {
+    enabled: false;
+    lines:   0;
+}

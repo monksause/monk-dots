@@ -1,0 +1,143 @@
+{
+    "layer": "top",
+    "position": "left",
+    "width": 28,
+    "spacing": 0,
+
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["mpris"],
+    "modules-right": [
+        "group/drawer", // Restored collapsible tray
+        "bluetooth",
+        "network",
+        "pulseaudio",
+        "clock",
+        "battery",
+        "custom/notification"
+    ],
+
+    "hyprland/workspaces": {
+        "on-click": "activate"
+    },
+
+
+    "mpris": {
+        "format": "{status_icon} {title}",
+        "rotate": 270, // This makes the text vertical
+        "max-length": 30,
+        "status-icons": {
+            "playing": "▶",
+            "paused": "⏸",
+            "stopped": "⏹"
+        }
+    },
+    "group/drawer": {
+        "orientation": "inherit",
+        "drawer": {
+            "transition-duration": 500,
+            "transition-left-to-right": false
+        },
+        "modules": [
+            "custom/tray-handle",
+            "tray"
+        ]
+    },
+
+    "custom/tray-handle": {
+        "format": "",
+        "tooltip": false
+    },
+
+    "tray": {
+        "spacing": 8,
+        "icon-size": 16
+    },
+
+    "network": {
+        "interface": "wlp6s0",
+        "format-wifi": "",
+        "format-ethernet": "󰈀",
+        "format-disconnected": "󰤮",
+        "tooltip-format": "{essid} ({signalStrength}%)",
+        "on-click": "nmgui"
+    },
+
+    "bluetooth": {
+        "format": "",
+        "format-connected": "󰂱",
+        "tooltip-format-connected": "{device_alias}\nBattery: {device_battery_percentage}%",
+        "on-click": "blueman-manager"
+    },
+
+    "pulseaudio": {
+        "scroll-step": 2,
+        "format": "{icon}",
+        "tooltip-format": "Volume: {volume}%", // Shows percentage on hover
+        "format-bluetooth": "󰂰",
+        "format-muted": "󰝟",
+        "format-icons": {
+            "headphone": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+
+    },
+     "clock": {
+        "format": "{:%I\n%M\n%S}",
+        "interval": 1,
+        "rotate": 0,
+       "on-click": "/usr/local/bin/ags -t ActivityCenter",
+        "tooltip-format": "<tt>{calendar}</tt>",
+        "calendar": {
+            "mode": "month",
+            "mode-mon-col": 3,
+            "on-scroll": 1,
+            "on-click-right": "mode",
+            "format": {
+                "months": "<span color='#ffead3'><b>{}</b></span>",
+                "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+                "today": "<span color='#ff6699'><b>{}</b></span>"
+            }
+         }
+    },       
+    
+    "battery": {
+        "states": {
+            "good": 95,
+            "warning": 30,
+            "critical": 20
+        },
+        "format": "{icon}",
+        "rotate": 0,
+        "format-charging": "<span color='#a6d189'>󱐋</span>",
+        "format-plugged": "󰂄",
+       // "format-alt": "<<span weight='bold' color='#c2864a'>{time} <span weight='bold' color='white'>| <span weight='bold' color='#82d457'>{capacity}%</span></span></span>",
+        //"format-icons": ["󰝦","󰪞","󰪟","󰪠","󰪡","󰪢","󰪣","󰪤","󰪥"],
+       "format-icons": ["","","","","","","",""],  
+       //"format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+      //  "format-icons": [<i class='fa-solid fa-wifi-slash'></i>],
+    
+    },
+    
+    "custom/notification": {
+    "tooltip": false,
+    "rotate": 0,
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "󱅫",
+      "none": "󰂚",
+      "dnd-notification": "󱅫",
+      "dnd-none": "󰂚",
+      "inhibited-notification": "󱅫",
+      "inhibited-none": "󰂚",
+      "dnd-inhibited-notification": "󱅫",
+      "dnd-inhibited-none": "󰂚"
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click-right": "swaync-client -d -sw",
+    "on-click": "swaync-client -t -sw",
+    "escape": true
+  }
+}

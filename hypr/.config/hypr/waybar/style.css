@@ -1,0 +1,109 @@
+*{
+    min-width: 0;
+    font-family: Lexend, "JetBrainsMono NFP";
+    font-size: 10px;
+    font-weight: 600;
+}
+
+window#waybar {
+   background-color: #11111B;
+   min-width: 20px;
+    /* background-color: transparent;*/
+
+}
+#custom-cava {
+    font-family: monospace;
+    font-size: 11px;
+    color: #89b4fa;
+    letter-spacing: 1px;
+    padding: 8px 2px;
+    opacity: 0.85;
+}
+/* --- WORKSPACES (EMPTY/BLANK BY DEFAULT) --- */
+#workspaces button {
+    background-color: transparent; /* Default is blank */
+    color: transparent;
+    min-width: 8px; /* Strict size to stop horizontal stretching */
+    /*max-width: 8px;*/
+    min-height: 8px;
+    margin: 4px 10px;
+    padding: 0;
+    border-radius: 10px;
+    border: none;
+    box-shadow: none;
+    transition: all 0.3s ease;
+}
+
+/* ACTIVE: Blue Pill */
+#workspaces button.active {
+    background-color: #7E96DF;/* Blue */
+    min-height: 24px;
+}
+
+/* URGENT: Pink Dot */
+/*#workspaces button.urgent{
+    background-color: #f38ba8;*/ /* Pink */
+/* OCCUPIED: Keep it blank as requested */
+#workspaces button.occupied:not(.active):not(.urgent) 
+{
+    /*background-color: #8D9093;*/
+    /*background-color: #ECC6BF;*/
+    background-color: #C0C0C0;
+}
+#workspaces button:not(.occupied):not(.active) {
+    background-color: #6C6E6D /* Your requested empty color */
+}
+/* HIDE 5-9 */
+/*#workspaces button:nth-child(n+6) {
+    min-width: 0; min-height: 0; font-size: 0; margin: 0; opacity: 0;
+}*/
+
+/* --- SYSTEM MODULES --- */
+#custom-tray-handle 
+#bluetooth {
+    margin-right: 3px
+}
+#network, #pulseaudio, #battery, #custom-notification {
+    padding: 2px 0;
+    margin: 2px 0;
+    font-size: 15px;
+}
+
+#bluetooth { font-size: 19px; color: #89b4fa; }
+#network { color: #f9e2af; }
+#pulseaudio { 
+    font-size: 17px;
+    color: #b4befe; 
+}
+#battery { color: #a6e3a1; }
+
+/* --- MPRIS (VERTICAL) --- */
+#mpris {
+    color: #cdd6f4;
+    margin: 8px 0;
+    font-size: 12px;
+    font-weight: 700
+}
+#mpris.playing { color: #a6e3a1; }
+
+/* --- YOUR CLOCK (UNTOUCHED) --- */
+#clock {
+    color: #cccedb;
+    font-size: 15px;
+    font-weight: 900;
+    font-family: "CaskaydiaCove Nerd Font Mono";
+    background: rgba(23, 23, 23, 0.0);
+    opacity: 1;
+    margin: 3px -13px -3px -13px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 3px;
+    border: none;
+}
+
+tooltip {
+    background-color: #181825;
+    border: 1px solid #89b4fa;
+    border-radius: 8px;
+}

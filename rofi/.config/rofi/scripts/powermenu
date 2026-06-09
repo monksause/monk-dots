@@ -1,0 +1,29 @@
+#!/bin/bash
+
+scrDir="$HOME/.config/hypr/scripts"
+
+options="Shutdown\nReboot\nSuspend\nHibernate\nLogout"
+
+choice=$(echo -e "$options" | rofi -dmenu -p "" -config "$HOME/.config/rofi/custom-rofi/config-powermenu.rasi")
+
+case "$choice" in
+"Shutdown")
+  umount -a & poweroff 
+	;;
+"Reboot")
+  umount -a & reboot
+	;;
+"Suspend")
+	systemctl suspend
+	;;
+"Hibernate")
+	systemctl hibernate
+	;;
+"Logout")
+	if pgrep -x mango >/dev/null; then
+		killall mango
+	else
+		hyprshutdown
+  fi
+	;;
+esac

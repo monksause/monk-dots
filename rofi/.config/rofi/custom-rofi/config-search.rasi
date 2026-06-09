@@ -1,0 +1,53 @@
+/* config-search.rasi — zen browser search bar
+   Drop at ~/.config/rofi/custom-rofi/config-search.rasi
+   @imports your base config.rasi for all shared tokens
+*/
+
+@import "~/.config/rofi/config.rasi"
+
+window {
+    width:            500px;
+    location:         north;
+    anchor:           north;
+    y-offset:         60px;
+    background-color: transparent;
+    border-radius:    0;
+}
+
+mainbox {
+    padding:  0;
+    children: [ "inputbar" ];
+}
+
+inputbar {
+    padding:          12px 16px;
+    margin:           0;
+    border-radius:    12px;
+    background-color: #00000099;
+    spacing:          10px;
+    children:         [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled:          true;
+    background-color: transparent;
+    text-color:       #ffffffaa;
+    /* glyph swaps at runtime via -theme-str from the script */
+}
+
+entry {
+    background-color: transparent;
+    text-color:       #ffffffd0;
+    placeholder:      "search or type a url…";
+    placeholder-color: #ffffff40;
+    horizontal-align: 0.0;
+    cursor:           text;
+    font:             "CaskaydiaCove Nerd Font Mono 10";
+    expand:           true;
+}
+
+/* no list — input bar only */
+listview {
+    enabled: false;
+    lines:   0;
+}

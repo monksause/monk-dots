@@ -1,0 +1,143 @@
+#!/usr/bin/env bash
+# term-run — floating terminal command bar
+# Place at ~/.local/bin/term-run  and  chmod +x it
+#
+# Behaviour:
+#   • Short / instant output  →  show result in a second rofi popup
+#   • TUI / interactive apps  →  open in alacritty
+#   • Editors / pagers        →  open in alacritty
+#   • Everything else         →  open in alacritty
+#
+# Keybind (example for hyprland, i3, sway, etc.):
+#   hyprland:  bind = SUPER, Return, exec, ~/.local/bin/term-run
+#   i3/sway:   bindsym $mod+Return exec ~/.local/bin/term-run
+
+TERMINAL="alacritty"
+ROFI_THEME="${HOME}/.config/rofi/term-run.rasi"
+ROFI_MAIN_THEME="${HOME}/.config/rofi/config.rasi"   # your existing theme
+
+# ── TUI / interactive commands that always need a real terminal ──────────────
+TUI_PATTERNS=(
+    "^(vim?|nvim|nano|emacs|helix|hx|micro)\b"
+    "^(htop|btop|bpytop|glances|top|atop)\b"
+    "^(ranger|lf|nnn|yazi|mc)\b"
+    "^(ssh|mosh)\b"
+    "^(python3?|ipython|bpython|node|irb|lua|ghci)\b"
+    "^(man|less|more)\b"
+    "^(fzf|gum)\b"
+    "^(tmux|screen|zellij)\b"
+    "^(watch)\b"
+    "^(sudo\s+)?(pacman|apt|apt-get|dnf|yum|brew)\b"
+    ".*\|\s*(less|more|fzf)(\s|$)"
+)
+
+# ── Commands whose output we show inline (fast, non-TUI) ────────────────────
+INLINE_PATTERNS=(
+    "^(echo|printf|date|cal|uptime|uname|hostname|whoami|id|pwd)\b"
+    "^(cat|head|tail|wc|du|df)\b.*[^|]$"    # only if not piped further
+    "^(ls|la|ll|exa|eza|lsd)\b"
+    "^(which|type|whereis|file|stat)\b"
+    "^(ping)\b"
+    "^(curl|wget)\b.*(-s|-I|--head)\b"
+    "^(git\s+(status|log|diff|branch|remote|tag))\b"
+    "^(systemctl\s+(status|is-active|is-enabled))\b"
+    "^(ip|ifconfig|ss|netstat)\b"
+    "^(ps|pgrep)\b"
+    "^(free|vmstat|lscpu|lsblk|lsusb|lspci)\b"
+    "^(env|printenv|set)\b"
+    "^(find|locate)\b"
+    "^(grep|rg|ag)\b"
+)
+
+# ─────────────────────────────────────────────────────────────────────────────
+is_tui() {
+    local cmd="$1"
+    for pat in "${TUI_PATTERNS[@]}"; do
+        [[ "$cmd" =~ $pat ]] && return 0
+    done
+    return 1
+}
+
+is_inline() {
+    local cmd="$1"
+    for pat in "${INLINE_PATTERNS[@]}"; do
+        [[ "$cmd" =~ $pat ]] && return 0
+    done
+    return 1
+}
+
+show_output_popup() {
+    # Display command output in a small rofi message popup
+    local output="$1"
+    local cmd_label="$2"
+    # Trim to 30 lines max so the popup stays sane
+    local trimmed
+    trimmed=$(echo "$output" | head -30)
+    local line_count
+    line_count=$(echo "$trimmed" | wc -l)
+
+    echo "$trimmed" | rofi \
+        -dmenu \
+        -p "  $cmd_label" \
+        -theme "$ROFI_THEME" \
+        -theme-str "
+            window  { width: 620px; }
+            mainbox { children: [\"inputbar\",\"listview\"]; }
+            listview {
+                enabled:      true;
+                lines:        $((line_count > 15 ? 15 : line_count));
+                fixed-height: false;
+                scrollbar:    false;
+                background-color: transparent;
+            }
+            element { padding: 4px 12px; }
+            element-text {
+                font: \"CaskaydiaCove Nerd Font Mono 10\";
+                text-color: #ffffffcc;
+            }
+            inputbar { background-color: #ffffff18; }
+            entry { placeholder: \"(press Esc to close)\"; }
+        " \
+        -no-custom \
+        > /dev/null 2>&1
+}
+
+run_in_terminal() {
+    local cmd="$1"
+    "$TERMINAL" --hold -e bash -c "$cmd" &
+}
+
+# ── Prompt the user ──────────────────────────────────────────────────────────
+CMD=$(rofi \
+    -dmenu \
+    -p " " \
+    -theme "$ROFI_THEME" \
+    -theme-str "
+        window { width: 480px; }
+    " \
+    < /dev/null)
+
+[[ -z "$CMD" ]] && exit 0
+
+# ── Route the command ────────────────────────────────────────────────────────
+if is_tui "$CMD"; then
+    run_in_terminal "$CMD"
+
+elif is_inline "$CMD"; then
+    OUTPUT=$(bash -c "$CMD" 2>&1)
+    EXIT_CODE=$?
+
+    if [[ $EXIT_CODE -ne 0 ]]; then
+        show_output_popup "Exit $EXIT_CODE:
+$OUTPUT" "$CMD"
+    elif [[ -z "$OUTPUT" ]]; then
+        # Nothing printed — still confirm it ran
+        show_output_popup "(no output — exit 0)" "$CMD"
+    else
+        show_output_popup "$OUTPUT" "$CMD"
+    fi
+
+else
+    # Unknown / ambiguous — play it safe, open in terminal
+    run_in_terminal "$CMD"
+fi
