@@ -19,7 +19,7 @@ set -euo pipefail
 DOTFILES_DIR="${HOME}/.dotfiles"
 
 # Stow packages (must match directory names inside ~/.dotfiles)
-CONFIGS=(alacritty fish hypr kitty rofi swaync swayosd)
+CONFIGS=(alacritty fish hypr kitty rofi swaync swayosd waybar)
 
 # Parse flag
 ACTION="stow"
