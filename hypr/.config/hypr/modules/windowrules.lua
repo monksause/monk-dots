@@ -39,6 +39,11 @@ hl.window_rule({
 	float = true,
 	size = { "monitor_w * 0.5", "monitor_h * 0.5" },
 })
+hl.window_rule({
+	name = "flameshot",
+	match = { class = "flameshot" },
+	float = true,
+})
 -- Layer rules also return a handle.
 -- local overlayLayerRule = hl.layer_rule({
 -- name  = "no-anim-overlay",
