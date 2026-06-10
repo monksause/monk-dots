@@ -2,7 +2,7 @@
 ----- AUTOSTART ----
 --------------------
 hl.on("hyprland.start", function()
-	hl.exec_cmd("waybar -c ~/.config/hypr/waybar/config.jsonc -s ~/.config/hypr/waybar/style.css")
+	hl.exec_cmd("waybar &")
 	hl.exec_cmd("wl-paste --type text --watch cliphist store")
 	hl.exec_cmd("wl-paste --type image --watch cliphist store")
 	hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
