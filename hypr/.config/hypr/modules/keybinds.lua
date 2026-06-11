@@ -18,7 +18,7 @@ hl.bind("ALT + SHIFT + Insert", hl.dsp.exec_cmd("~/.config/rofi/scripts/wallPick
 hl.bind("SUPER + ALT + I", hl.dsp.exec_cmd("~/.config/hypr/nightlight"))
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
 hl.bind("Print", function()
-	hl.dsp.exec_cmd("XDG_CURRENT_DESKTOP=sway flameshot gui ")
+	hl.dsp.exec_cmd("flameshot gui ")
 end)
 hl.bind("ALT + Space", hl.dsp.exec_cmd("~/.local/bin/rofisearch"))
 hl.bind("ALT + R", hl.dsp.exec_cmd("~/.local/bin/term-run"))
