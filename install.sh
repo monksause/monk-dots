@@ -62,7 +62,7 @@ install_packages() {
                 alacritty fish kitty
                 hyprland xdg-desktop-portal-hyprland
                 awww hyprlock hypridle waybar
-                rofi-wayland
+                rofi-wayland mate-polkit
                 flameshot pavucontrol blueman nm-connection-editor
                 pipewire pipewire-pulse wireplumber
             )
@@ -105,7 +105,7 @@ install_packages() {
                 alacritty fish kitty
                 hyprland xdg-desktop-portal-hyprland
                 awww hyprlock hypridle
-                rofi-wayland waybar
+                rofi-wayland waybar mate-polkit
                 SwayNotificationCenter swayosd
                 flameshot pavucontrol blueman nm-connection-editor
                 pipewire pipewire-pulseaudio wireplumber
@@ -139,7 +139,7 @@ install_packages() {
                 stow
                 alacritty fish kitty
                 hyprland xdg-desktop-portal-hyprland
-                rofi waybar
+                rofi waybar mate-polkit
                 sway-notification-center   # package name for swaync on apt
                 flameshot pavucontrol blueman network-manager-gnome
                 pipewire pipewire-audio wireplumber
@@ -215,7 +215,7 @@ stow_configs() {
 # ── Entry point ───────────────────────────────────────────────────────────────
 main() {
     echo -e "\n${BOLD}╔══════════════════════════════════╗"
-    echo -e   "║   dotfiles bootstrap — install.sh  ║"
+    echo -e   "║   dotfiles bootstrap — install.sh║"
     echo -e   "╚══════════════════════════════════╝${RESET}\n"
 
     detect_distro
